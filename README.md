@@ -21,6 +21,10 @@
 >> - **DES对称加密算法**（可以替换为其他对称加密算法）
 >> - **md5哈希算法**（可以替换为SHA-1、SHA-256等其他哈希算法，md5的安全性可能已经不再有那么高）
 
+项目已开源，是针对[https://blog.csdn.net/qq_38951154/article/details/107270408](https://blog.csdn.net/qq_38951154/article/details/107270408)的改进版本
+
+Github地址（记得来点个STAR呀，也别忘了[原作者的](https://gitee.com/yangzhenman/python-chat "原作者的")呢）：[https://github.com/xiaolongtongxue/python_chat_room](https://github.com/xiaolongtongxue/python_chat_room)
+
 ## 运行效果
 
 [![](https://gitee.com/xiaolongtongxue/imagebed/raw/master/img/202205092001794.png)](https://gitee.com/xiaolongtongxue/imagebed/raw/master/img/202205092001794.png)
@@ -32,6 +36,12 @@
 **Server端缓存用户列表、信息列表等内容，在其发生变化（用户登入登出、用户发送消息）的时候极使广播更新，因此客户端发送端口仍需保持监听状态**
 
 [![](https://gitee.com/xiaolongtongxue/imagebed/raw/master/img/202205092014124.png)](https://gitee.com/xiaolongtongxue/imagebed/raw/master/img/202205092014124.png)
+
+**安全层面**
+
+除了第一次建立连接的使用的是对称加密方式，其他时候都使用了非对称加密。并且都坚持了使用对方公钥签名加密的原则。
+
+无论是什么事后，在通信的事后都会再三次握手成功之后坚持进行哈希加盐验证，盐的组成是五位的随机数，如果验证失败，则消息可能被篡改，此时应当及时停止通信
 
 ## 关键代码分析
 
@@ -293,8 +303,22 @@ self.s.close()
 
 > 阿西
 
+这玩意儿的CPU占用率是真的高，云服务器跑了一会儿还以为谁来拿我机器挖矿去了呢.....
+
+*top看了下后台心凉了半截（这玩意儿的服务器占用比我六七个docker外加好几个nginx站点都要高）*
+
+[![](https://gitee.com/xiaolongtongxue/imagebed/raw/master/img/202205092102515.png)](https://gitee.com/xiaolongtongxue/imagebed/raw/master/img/202205092102515.png)
+
+*云端的监控截图*
+
+[![](https://gitee.com/xiaolongtongxue/imagebed/raw/master/img/202205092104548.png)](https://gitee.com/xiaolongtongxue/imagebed/raw/master/img/202205092104548.png)
+
+> 阿西
+
 通过对整个源代码的复盘分析,感觉到自己对于稍微大一点的项目，全局能力还不够强，可能还是因为写得少吧...之前哪个Java项目后台也是socket结构结果写成那个鸟样......
 
 python的队列真是个好东西
 
 基础架构决定上层建筑。架构师的重要性不言而喻
+
+在因为某些原因导致信息安全作品赛失利之后，写完这个，感觉也能放下来一些了。未来的路还很长，那么就跑起来吧！少年！
